@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>{{ titulo }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            {% for field in form %}
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger">
+                        {{ field.errors.as_text }}
+                    </div>
+                {% endif %}
+                <br>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    let idInput = document.getElementById("id_input");
+
+    idInput.addEventListener("input", function() {
+        let value = idInput.value.toUpperCase().replace(/[^0-9A-F]/g, ""); 
+        let formattedValue = "";
+
+        for (let i = 0; i < value.length; i++) {
+            if (i > 0 && i % 2 === 0) {
+                formattedValue += ":";  
+            }
+            formattedValue += value[i];
+        }
+
+        idInput.value = formattedValue.slice(0, 11);  
+    });
+});
+</script>
+{% endblock %}

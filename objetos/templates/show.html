@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Registros{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    
+    {% if bens %}
+    <h2 class="text-center text-dark">Meus Bens</h2>
+    <table class="table table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Departamento</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bem in bens %}
+            <tr>
+                <td>{{ bem.id }}</td>
+                <td>{{ bem.nome }}</td>
+                <td>{{ bem.categoria.nome }}</td>
+                <td>{{ bem.departamento.nome }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url "criar_bem" %}" class="btn btn-primary">Cadastrar Bem</a>
+    <a href="{% url "mover_bem" %}" class="btn btn-secondary">Movimentar Bem</a>
+
+    {% elif movi %}
+    <h2 class="text-center text-dark">Minhas Movimentações</h2>
+    <table class="table table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Data</th>
+                <th>Bem</th>
+                <th>De</th>
+                <th>Para</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mov in movi %}
+            <tr>
+                <td>{{ mov.data }}</td>
+                <td>{{ mov.bem.nome }}</td>
+                <td>{{ mov.de_departamento.nome }}</td>
+                <td>{{ mov.para_departamento.nome }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% else %}
+    <div class="alert alert-warning mt-4 text-center" role="alert">
+        Nenhum registro encontrado.
+    </div>
+    {% endif %}
+
+</div>
+{% endblock content %}

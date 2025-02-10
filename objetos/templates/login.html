@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+    <div class="card shadow p-4" style="width: 400px; border-radius: 10px;">
+        <h3 class="text-center mb-3 text-primary">Login</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Usuário</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Senha</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{% url 'register' %}" class="text-muted">Criar uma conta</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
