@@ -41,6 +41,9 @@ class TransacaoForm(forms.ModelForm):
         user = kwargs.pop('user', None)  # Captura o usuário logado
         super().__init__(*args, **kwargs)
 
+        if user:
+            self.fields['bem'].queryset = Bem.objects.filter(dono=user)  # 🔹 Filtra apenas os bens do usuário
+
         for field_name, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
@@ -52,7 +55,7 @@ class TransacaoForm(forms.ModelForm):
         
         # Define o departamento de origem como o atual do bem
         movimentacao.de_departamento = movimentacao.bem.departamento  
-        
+
         if commit:
             movimentacao.save()
             # Atualiza o departamento do bem após a movimentação ser salva
@@ -60,4 +63,3 @@ class TransacaoForm(forms.ModelForm):
             movimentacao.bem.save()
 
         return movimentacao
-

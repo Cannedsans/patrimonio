@@ -9,18 +9,20 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     
-    <!-- Estilos extras -->
     <style>
         .navbar-brand {
             font-weight: bold;
         }
+        .theme-toggle {
+            cursor: pointer;
+        }
     </style>
 </head>
-<body>
+<body class="bg-light text-dark">
 
     {% block navbar %}
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#">Patrimônio: {{ user.username }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -28,21 +30,17 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url "bens" %}">Bens</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url "criar_bem" %}">Cadastrar bem</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url "forne" %}">Fornecedores</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url "movimentacoes" %}">Movimentações</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bens' %}">Bens</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'criar_bem' %}">Cadastrar bem</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'forne' %}">Fornecedores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'movimentacoes' %}">Movimentações</a></li>
                 </ul>
 
                 <!-- Verificação de autenticação -->
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="btn btn-outline-light" href="{% url 'logout' %}">Sair</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="btn btn-primary" href="{% url 'login' %}">Entrar</a>
+                            <a class="btn btn-danger" href="{% url 'logout' %}">Sair</a>
                         </li>
                     {% endif %}
                 </ul>
@@ -54,7 +52,6 @@
     <!-- Conteúdo principal -->
     <div class="container mt-4">
         {% block content %}
-            <h1 class="text-primary">{% lorem 2 b random %}</h1>
         {% endblock content %}
     </div>
 
