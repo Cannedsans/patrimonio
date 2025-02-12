@@ -30,7 +30,8 @@ class Bem(models.Model):
     nome = models.CharField(max_length=100)  # Substituí TextField por CharField
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     dono = models.ForeignKey(User, on_delete=models.CASCADE)
-    departamento = models.ForeignKey("Departamento", on_delete=models.CASCADE)  # Adicionado aspas para evitar erro de referência
+    departamento = models.ForeignKey("Departamento", on_delete=models.CASCADE)
+    marca = models.ForeignKey("Fornecedor", verbose_name="Marca", on_delete=models.CASCADE)  # Adicionado aspas para evitar erro de referência
 
     def __str__(self):
         return self.nome

@@ -9,6 +9,7 @@ class TestCategoria(TestCase):
         self.categoria1 = Categoria.objects.create(nome="Dummy")
 
     def test_nomeCategoria(self):
+        """Testa se o nome da categoria é retornado corretamente."""
         self.assertEqual(str(self.categoria1), "Dummy")
 
 
@@ -18,6 +19,7 @@ class TestDepartamento(TestCase):
         self.depo1 = Departamento.objects.create(nome="Dummy")
 
     def test_nomeDepartamento(self):
+        """Testa se o nome do departamento é retornado corretamente."""
         self.assertEqual(str(self.depo1), "Dummy")
 
 
@@ -31,6 +33,11 @@ class TestBem(TestCase):
             password='senha123'
         )
         self.departamento = Departamento.objects.create(nome="Dummy")
+        self.fornecedor = Fornecedor.objects.create(
+            cnpj="12.345.678/0001-99",
+            userId=self.dono,
+            nome="Fornecedor Exemplo"
+        )
 
     def test_rfid_invalido(self):
         """Testa se um RFID inválido gera um erro de validação."""
@@ -40,7 +47,8 @@ class TestBem(TestCase):
                 nome="Bem Inválido",
                 categoria=self.categoria,
                 dono=self.dono,
-                departamento=self.departamento
+                departamento=self.departamento,
+                marca=self.fornecedor
             )
             bem.full_clean()  # Dispara a validação
 
@@ -51,10 +59,11 @@ class TestBem(TestCase):
             nome="Bem válido",
             categoria=self.categoria,
             dono=self.dono,
-            departamento=self.departamento
+            departamento=self.departamento,
+            marca=self.fornecedor
         )
-        self.assertEquals(bem.id, "D3:FD:44:FA")
-        self.assertEquals(str(bem), bem.nome)
+        self.assertEqual(bem.id, "D3:FD:44:FA")
+        self.assertEqual(str(bem), bem.nome)
 
 
 # Teste para Fornecedores
@@ -86,10 +95,10 @@ class TestFornecedores(TestCase):
     def test_criado(self):
         """Testa se um fornecedor válido é aceito e armazenado corretamente."""
         # Verificando se o CNPJ foi armazenado corretamente
-        self.assertEquals(self.fornecedor.cnpj, "12.345.678/0001-99")
-        
+        self.assertEqual(self.fornecedor.cnpj, "12.345.678/0001-99")
         # Verificando se a string de representação do fornecedor está correta
-        self.assertEquals(str(self.fornecedor), "Fornecedor Exemplo: 12.345.678/0001-99")
+        self.assertEqual(str(self.fornecedor), "Fornecedor Exemplo: 12.345.678/0001-99")
+
 
 # Teste para Movimentações
 class TestMovimentacoes(TestCase):
@@ -103,14 +112,19 @@ class TestMovimentacoes(TestCase):
         )
         self.depto_origem = Departamento.objects.create(nome="TI")
         self.depto_destino = Departamento.objects.create(nome="Administração")
+        self.fornecedor = Fornecedor.objects.create(
+            cnpj="12.345.678/0001-99",
+            userId=self.dono,
+            nome="Fornecedor Exemplo"
+        )
         self.bem = Bem.objects.create(
             id="AB:CD:12:34",
             nome="Notebook",
             categoria=self.categoria,
             dono=self.dono,
-            departamento=self.depto_origem
+            departamento=self.depto_origem,
+            marca=self.fornecedor
         )
-        # Alteração: corrigir o nome da classe para Movimentacao
         self.movimentacao = Movimentacao.objects.create(
             bem=self.bem,
             de_departamento=self.depto_origem,
@@ -120,7 +134,8 @@ class TestMovimentacoes(TestCase):
 
     def test_criado(self):
         """Testa se a movimentação foi criada corretamente."""
-        self.assertEquals(self.movimentacao.bem, self.bem)
-        self.assertEquals(self.movimentacao.de_departamento, self.depto_origem)
-        self.assertEquals(self.movimentacao.para_departamento, self.depto_destino)
-        self.assertEquals(self.movimentacao.responsavel, self.dono)
+        self.assertEqual(self.movimentacao.bem, self.bem)
+        self.assertEqual(self.movimentacao.de_departamento, self.depto_origem)
+        self.assertEqual(self.movimentacao.para_departamento, self.depto_destino)
+        self.assertEqual(self.movimentacao.responsavel, self.dono)
+        self.assertIsNotNone(self.movimentacao.data)  # Verifica se a data foi criada automaticamente

@@ -52,12 +52,22 @@
             {% endfor %}
         </tbody>
     </table>
-    
+    <a href="{% url "mover_bem" %}" class="btn btn-secondary">Movimentar Bem</a>
+    {% elif forne %}
+    <h2 class="text-center text-dark">Fornecedores disponivéis</h2>
+        <table class="table table-striped mt-4">
+            <tbody>
+                {% for forn in forne %}
+                <tr>
+                    <td>{{ forn }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
     <div class="alert alert-warning mt-4 text-center" role="alert">
         Nenhum registro encontrado.
     </div>
     {% endif %}
-
 </div>
 {% endblock content %}
