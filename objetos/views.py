@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -8,6 +8,12 @@ from .forms import *
 @login_required
 def home(request):
     bens = Bem.objects.filter(dono=request.user)  # Mostra apenas os bens do usuário logado
+
+    valor_total = sum(bem.valor for bem in bens)
+    return render(request, 'show.html', {
+        'bens': bens,
+        'valor_total': valor_total,
+    })
     return render(request, "show.html", {"bens": bens})
 
 def register(request):
@@ -93,3 +99,61 @@ def movi(request):
 def fonece(request):
     forne = Fornecedor.objects.all()
     return render(request, "show.html", {"forne":forne})
+
+@login_required
+def editar_bem(request, id):
+    # Obtém o bem com base no ID ou retorna 404 se não existir
+    bem = get_object_or_404(Bem, id=id)
+
+    # Verifica se o usuário logado é o dono do bem
+    if bem.dono != request.user:
+        return redirect('bens')  # Redireciona se o usuário não for o dono
+
+    if request.method == 'POST':
+        # Preenche o formulário com os dados enviados e a instância do bem
+        form = BemForm(request.POST, instance=bem, user=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('bens')  # Redireciona para a lista de bens após salvar
+    else:
+        # Exibe o formulário preenchido com os dados do bem
+        form = BemForm(instance=bem, user=request.user)
+
+    return render(request, 'form.html', {
+        'form': form,
+        'titulo': 'Editar Bem'
+    })
+
+def agendar_manutencao(request, id):
+    # Obtém o bem com base no ID ou retorna 404 se não existir
+    bem = get_object_or_404(Bem, id=id)
+
+    # Verifica se o usuário logado é o dono do bem
+    if bem.dono != request.user:
+        return redirect('bens')  # Redireciona se o usuário não for o dono
+
+    if request.method == 'POST':
+        # Preenche o formulário com os dados enviados
+        form = ManutencaoForm(request.POST)
+        if form.is_valid():
+            manutencao = form.save(commit=False)
+            manutencao.bem = bem  # Associa a manutenção ao bem
+            manutencao.save()
+            return redirect('bens')  # Redireciona para a lista de bens após salvar
+    else:
+        # Exibe o formulário vazio
+        form = ManutencaoForm()
+
+    return render(request, 'form.html', {
+        'form': form,
+        'titulo': f'Agendar Manutenção para {bem.nome}'
+    })
+
+@login_required
+def categorias(request):
+    # Recupera todas as categorias do banco de dados
+    categorias = Categoria.objects.all()
+    return render(request, 'show.html', {
+        'categorias': categorias,  # Passa as categorias para o template
+        'titulo': 'Categorias'  # Título da página
+    })

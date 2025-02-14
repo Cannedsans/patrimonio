@@ -14,6 +14,10 @@
                 <th>Nome</th>
                 <th>Categoria</th>
                 <th>Departamento</th>
+                <th>Valor</th>
+                <th>Status de Manutenção</th>
+                <th>Próxima Revisão</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -23,12 +27,49 @@
                 <td>{{ bem.nome }}</td>
                 <td>{{ bem.categoria.nome }}</td>
                 <td>{{ bem.departamento.nome }}</td>
+                <td>R$ {{ bem.valor }}</td>
+                <td>{{ bem.get_status_manutencao_display }}</td>
+                <td>{{ bem.data_proxima_revisao|default:"N/A" }}</td>
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton{{ bem.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ações
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ bem.id }}">
+                            <li><a class="dropdown-item" href="{% url 'editar_bem' bem.id %}">Editar</a></li>
+                            <li><a class="dropdown-item" href="{% url 'agendar_manutencao' bem.id %}">Agendar Manutenção</a></li>
+                        </ul>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url "criar_bem" %}" class="btn btn-primary">Cadastrar Bem</a>
-    <a href="{% url "mover_bem" %}" class="btn btn-secondary">Movimentar Bem</a>
+
+    <!-- Exibir o valor total dos bens do usuário logado -->
+    <div class="alert alert-info mt-4">
+        <strong>Valor Total dos Bens:</strong> R$ {{ valor_total }}
+    </div>
+
+    <a href="{% url 'criar_bem' %}" class="btn btn-primary">Cadastrar Bem</a>
+    <a href="{% url 'mover_bem' %}" class="btn btn-secondary">Movimentar Bem</a>
+
+    {% elif categorias %}
+    <h2 class="text-center text-dark">{{ titulo }}</h2>
+    <table class="table table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Nome</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.nome }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     {% elif movi %}
     <h2 class="text-center text-dark">Minhas Movimentações</h2>
@@ -52,18 +93,19 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url "mover_bem" %}" class="btn btn-secondary">Movimentar Bem</a>
+    <a href="{% url 'mover_bem' %}" class="btn btn-secondary">Movimentar Bem</a>
+
     {% elif forne %}
-    <h2 class="text-center text-dark">Fornecedores disponivéis</h2>
-        <table class="table table-striped mt-4">
-            <tbody>
-                {% for forn in forne %}
-                <tr>
-                    <td>{{ forn }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h2 class="text-center text-dark">Fornecedores disponíveis</h2>
+    <table class="table table-striped mt-4">
+        <tbody>
+            {% for forn in forne %}
+            <tr>
+                <td>{{ forn }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
     <div class="alert alert-warning mt-4 text-center" role="alert">
         Nenhum registro encontrado.
